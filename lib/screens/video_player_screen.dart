@@ -121,52 +121,142 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen> {
             )
           : null,
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            )
+          ? _buildLoadingState()
           : _hasError
               ? _buildErrorWidget()
               : _buildVideoPlayer(),
     );
   }
 
-  Widget _buildErrorWidget() {
+  Widget _buildLoadingState() {
+    final theme = Theme.of(context);
+
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.white,
+      child: Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.1),
+            width: 1,
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'Gagal load video nih',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                strokeWidth: 3,
+              ),
             ),
+            const SizedBox(height: 24),
+            Text(
+              'Loading Video...',
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Preparing your video experience',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.white70,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.1),
+            width: 1,
           ),
-          const SizedBox(height: 8),
-          Text(
-            _errorMessage ?? 'Unknown error',
-            style: const TextStyle(color: Colors.white70),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _isLoading = true;
-                _hasError = false;
-              });
-              _initializeVideoPlayer();
-            },
-            child: const Text('Coba Lagi'),
-          ),
-        ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(
+                Icons.warning_rounded,
+                size: 48,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Oops! Video Error',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _errorMessage ?? 'Gagal load video nih, coba lagi yuk!',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.white70,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _isLoading = true;
+                    _hasError = false;
+                  });
+                  _initializeVideoPlayer();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(Icons.refresh_rounded, size: 20),
+                label: const Text(
+                  'Try Again',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -189,114 +279,176 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen> {
   }
 
   Widget _buildControls() {
+    final theme = Theme.of(context);
+
     return Container(
-      color: Colors.black26,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.black.withOpacity(0.7),
+            Colors.transparent,
+            Colors.transparent,
+            Colors.black.withOpacity(0.8),
+          ],
+          stops: const [0.0, 0.3, 0.7, 1.0],
+        ),
+      ),
       child: Column(
         children: [
           if (MediaQuery.of(context).orientation == Orientation.landscape)
             SafeArea(
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  ),
-                  Expanded(
-                    child: Text(
-                      widget.video.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      overflow: TextOverflow.ellipsis,
+                      child: IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.arrow_back_rounded,
+                            color: Colors.white),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        widget.video.title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           const Spacer(),
-          Center(
+          Container(
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(
+                _buildControlButton(
+                  icon: Icons.replay_10_rounded,
                   onPressed: () {
                     final currentPosition = _controller.value.position;
                     final newPosition =
                         currentPosition - const Duration(seconds: 10);
                     _controller.seekTo(newPosition);
                   },
-                  icon: const Icon(Icons.replay_10,
-                      color: Colors.white, size: 32),
+                  size: 32,
                 ),
-                const SizedBox(width: 20),
-                IconButton(
-                  onPressed: () {
-                    if (_controller.value.isPlaying) {
-                      _controller.pause();
-                    } else {
-                      _controller.play();
-                    }
-                    setState(() {});
-                  },
-                  icon: Icon(
-                    _controller.value.isPlaying
-                        ? Icons.pause
-                        : Icons.play_arrow,
+                const SizedBox(width: 24),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
                     color: Colors.white,
-                    size: 48,
+                    borderRadius: BorderRadius.circular(32),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      if (_controller.value.isPlaying) {
+                        _controller.pause();
+                      } else {
+                        _controller.play();
+                      }
+                      setState(() {});
+                    },
+                    icon: Icon(
+                      _controller.value.isPlaying
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
+                      color: theme.colorScheme.primary,
+                      size: 32,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                   ),
                 ),
-                const SizedBox(width: 20),
-                IconButton(
+                const SizedBox(width: 24),
+                _buildControlButton(
+                  icon: Icons.forward_10_rounded,
                   onPressed: () {
                     final currentPosition = _controller.value.position;
                     final newPosition =
                         currentPosition + const Duration(seconds: 10);
                     _controller.seekTo(newPosition);
                   },
-                  icon: const Icon(Icons.forward_10,
-                      color: Colors.white, size: 32),
+                  size: 32,
                 ),
               ],
             ),
           ),
           const Spacer(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          Container(
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: [
                 VideoProgressIndicator(
                   _controller,
                   allowScrubbing: true,
-                  colors: const VideoProgressColors(
-                    playedColor: Colors.red,
-                    bufferedColor: Colors.white30,
-                    backgroundColor: Colors.white12,
+                  colors: VideoProgressColors(
+                    playedColor: theme.colorScheme.primary,
+                    bufferedColor: Colors.white.withOpacity(0.3),
+                    backgroundColor: Colors.white.withOpacity(0.2),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       _formatDuration(_controller.value.position),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    IconButton(
-                      onPressed: _toggleFullScreen,
-                      icon: Icon(
-                        MediaQuery.of(context).orientation ==
-                                Orientation.portrait
-                            ? Icons.fullscreen
-                            : Icons.fullscreen_exit,
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        onPressed: _toggleFullScreen,
+                        icon: Icon(
+                          MediaQuery.of(context).orientation ==
+                                  Orientation.portrait
+                              ? Icons.fullscreen_rounded
+                              : Icons.fullscreen_exit_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                       ),
                     ),
                     Text(
                       _formatDuration(_controller.value.duration),
-                      style: const TextStyle(color: Colors.white),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
                     ),
                   ],
                 ),
@@ -304,6 +456,26 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildControlButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+    double size = 24,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(icon, color: Colors.white, size: size),
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
       ),
     );
   }
