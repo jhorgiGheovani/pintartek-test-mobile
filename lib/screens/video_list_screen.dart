@@ -142,104 +142,6 @@ class _VideoListScreenState extends State<VideoListScreen> {
                         ),
                       ),
                     ),
-                    // SliverPadding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                    //   sliver: SliverToBoxAdapter(
-                    //     child: Container(
-                    //       padding: const EdgeInsets.all(20),
-                    //       margin: const EdgeInsets.only(bottom: 24),
-                    //       decoration: BoxDecoration(
-                    //         gradient: LinearGradient(
-                    //           colors: [
-                    //             Colors.orange.shade400.withOpacity(0.15),
-                    //             Colors.pink.shade400.withOpacity(0.15),
-                    //           ],
-                    //           begin: Alignment.topLeft,
-                    //           end: Alignment.bottomRight,
-                    //         ),
-                    //         borderRadius: BorderRadius.circular(24),
-                    //         border: Border.all(
-                    //           color: Colors.orange.withOpacity(0.2),
-                    //           width: 1,
-                    //         ),
-                    //         boxShadow: [
-                    //           BoxShadow(
-                    //             color: Colors.orange.withOpacity(0.1),
-                    //             blurRadius: 12,
-                    //             offset: const Offset(0, 4),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //       child: Row(
-                    //         children: [
-                    //           Container(
-                    //             padding: const EdgeInsets.all(14),
-                    //             decoration: BoxDecoration(
-                    //               gradient: LinearGradient(
-                    //                 colors: [
-                    //                   Colors.orange.shade500,
-                    //                   Colors.pink.shade500
-                    //                 ],
-                    //                 begin: Alignment.topLeft,
-                    //                 end: Alignment.bottomRight,
-                    //               ),
-                    //               borderRadius: BorderRadius.circular(16),
-                    //               boxShadow: [
-                    //                 BoxShadow(
-                    //                   color: Colors.orange.withOpacity(0.3),
-                    //                   blurRadius: 8,
-                    //                   offset: const Offset(0, 4),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //             child: const Icon(
-                    //               Icons.trending_up_rounded,
-                    //               color: Colors.white,
-                    //               size: 24,
-                    //             ),
-                    //           ),
-                    //           const SizedBox(width: 18),
-                    //           Expanded(
-                    //             child: Column(
-                    //               crossAxisAlignment: CrossAxisAlignment.start,
-                    //               children: [
-                    //                 Text(
-                    //                   'Discover Videos',
-                    //                   style:
-                    //                       theme.textTheme.titleLarge?.copyWith(
-                    //                     fontWeight: FontWeight.w800,
-                    //                     color: Colors.black87,
-                    //                   ),
-                    //                 ),
-                    //                 const SizedBox(height: 4),
-                    //                 Text(
-                    //                   'Jelajahi koleksi video pilihan gue',
-                    //                   style:
-                    //                       theme.textTheme.bodyMedium?.copyWith(
-                    //                     color: Colors.black.withOpacity(0.6),
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ),
-                    //           Container(
-                    //             padding: const EdgeInsets.all(8),
-                    //             decoration: BoxDecoration(
-                    //               color: Colors.white.withOpacity(0.8),
-                    //               borderRadius: BorderRadius.circular(12),
-                    //             ),
-                    //             child: Icon(
-                    //               Icons.arrow_forward_ios_rounded,
-                    //               size: 18,
-                    //               color: Colors.orange.shade600,
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-
                     SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       sliver: SliverList(
@@ -361,7 +263,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Lagi nyiapin konten keren buat lo nih',
+              'Wait a second, still preparing the content!',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: Colors.black.withOpacity(0.6),
                 fontWeight: FontWeight.w500,
@@ -593,7 +495,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Tarik ke bawah buat refresh dan nemuin video keren',
+              'Swipe down to refresh and find cool videos',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: Colors.black.withOpacity(0.6),

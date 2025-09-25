@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class VideoService {
-  static const String baseUrl = 'http://10.0.2.2:8080/api/videos';
+  static const String baseUrl =
+      'https://apivideoplayer-production.up.railway.app/api/videos';
 
   Future<List<Video>> fetchVideos() async {
     try {
