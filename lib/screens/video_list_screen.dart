@@ -33,144 +33,216 @@ class _VideoListScreenState extends State<VideoListScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.blue.shade50,
-              Colors.purple.shade50.withOpacity(0.3),
+              const Color(0xFFF8FAFF),
+              const Color(0xFFFFF4E6),
               Colors.white,
             ],
-            stops: const [0.0, 0.4, 1.0],
+            stops: const [0.0, 0.5, 1.0],
           ),
         ),
-        child: BlocBuilder<VideoBloc, VideoState>(
-          builder: (context, state) {
-            if (state is VideoLoading) {
-              return _buildLoadingState();
-            } else if (state is VideoLoaded) {
-              return RefreshIndicator(
-                onRefresh: () async {
-                  HapticFeedback.lightImpact();
-                  context.read<VideoBloc>().add(RefreshVideos());
-                },
-                color: Colors.deepPurple,
-                backgroundColor: Colors.white,
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    SliverAppBar(
-                      expandedHeight: 120,
-                      floating: false,
-                      pinned: false,
-                      snap: false,
-                      elevation: 0,
-                      backgroundColor: Colors.transparent,
-                      systemOverlayStyle: SystemUiOverlayStyle.dark,
-                      flexibleSpace: FlexibleSpaceBar(
-                        background: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.blue.shade400.withOpacity(0.1),
-                                Colors.purple.shade400.withOpacity(0.1),
-                              ],
-                            ),
-                          ),
-                          child: SafeArea(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 20),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.blue.shade500,
-                                          Colors.purple.shade500
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ),
-                                      borderRadius: BorderRadius.circular(16),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.blue.withOpacity(0.3),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Icon(
-                                      Icons.play_circle_fill_rounded,
-                                      color: Colors.white,
-                                      size: 28,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Discover Videos',
-                                          style: theme.textTheme.headlineMedium
-                                              ?.copyWith(
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w900,
-                                            letterSpacing: -0.5,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Koleksi video keren buat kamu!',
-                                          style: theme.textTheme.bodyMedium
-                                              ?.copyWith(
-                                            color: Colors.black54,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final video = state.videos[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: VideoCard(
-                                video: video,
-                                onTap: () => _navigateToPlayer(context, video),
-                              ),
-                            );
-                          },
-                          childCount: state.videos.length,
-                        ),
-                      ),
-                    ),
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: 40),
-                    ),
-                  ],
+        child: Stack(
+          children: [
+            Positioned(
+              top: 150,
+              left: 20,
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue.shade200.withOpacity(0.3),
+                      Colors.cyan.shade200.withOpacity(0.2),
+                    ],
+                  ),
+                  shape: BoxShape.circle,
                 ),
-              );
-            } else if (state is VideoError) {
-              return _buildErrorState(state.message);
-            }
-            return _buildEmptyState();
-          },
+              ),
+            ),
+            Positioned(
+              bottom: 200,
+              right: 50,
+              child: Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.purple.shade200.withOpacity(0.3),
+                      Colors.indigo.shade200.withOpacity(0.2),
+                    ],
+                  ),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            BlocBuilder<VideoBloc, VideoState>(
+              builder: (context, state) {
+                if (state is VideoLoading) {
+                  return _buildLoadingState();
+                } else if (state is VideoLoaded) {
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      HapticFeedback.lightImpact();
+                      context.read<VideoBloc>().add(RefreshVideos());
+                    },
+                    color: Colors.orange.shade400,
+                    backgroundColor: Colors.white,
+                    strokeWidth: 3,
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverAppBar(
+                          expandedHeight: 120,
+                          floating: false,
+                          pinned: false,
+                          snap: false,
+                          elevation: 0,
+                          backgroundColor: Colors.transparent,
+                          systemOverlayStyle: SystemUiOverlayStyle.dark,
+                          flexibleSpace: FlexibleSpaceBar(
+                            background: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.orange.shade100.withOpacity(0.4),
+                                    Colors.pink.shade100.withOpacity(0.3),
+                                  ],
+                                ),
+                              ),
+                              child: SafeArea(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 20),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Colors.orange.shade400,
+                                              Colors.pink.shade400
+                                            ],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.orange
+                                                  .withOpacity(0.4),
+                                              blurRadius: 12,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                            BoxShadow(
+                                              color:
+                                                  Colors.pink.withOpacity(0.2),
+                                              blurRadius: 8,
+                                              offset: const Offset(2, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: const Icon(
+                                          Icons.play_circle_fill_rounded,
+                                          color: Colors.white,
+                                          size: 28,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Discover Videos',
+                                                  style: theme
+                                                      .textTheme.headlineMedium
+                                                      ?.copyWith(
+                                                    color: Colors.black87,
+                                                    fontWeight: FontWeight.w900,
+                                                    letterSpacing: -0.5,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(4),
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        Colors.yellow.shade300,
+                                                        Colors.orange.shade300,
+                                                      ],
+                                                    ),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.auto_awesome,
+                                                    size: 16,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(
+                                              'Koleksi video keren buat kamu!',
+                                              style: theme.textTheme.bodyMedium
+                                                  ?.copyWith(
+                                                color: Colors.black54,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SliverPadding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final video = state.videos[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: VideoCard(
+                                    video: video,
+                                    onTap: () =>
+                                        _navigateToPlayer(context, video),
+                                  ),
+                                );
+                              },
+                              childCount: state.videos.length,
+                            ),
+                          ),
+                        ),
+                        const SliverToBoxAdapter(
+                          child: SizedBox(height: 40),
+                        ),
+                      ],
+                    ),
+                  );
+                } else if (state is VideoError) {
+                  return _buildErrorState(state.message);
+                }
+                return _buildEmptyState();
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -211,11 +283,11 @@ class _VideoListScreenState extends State<VideoListScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.blue.shade50,
-            Colors.purple.shade50.withOpacity(0.3),
+            const Color(0xFFF8FAFF),
+            const Color(0xFFFFF4E6),
             Colors.white,
           ],
-          stops: const [0.0, 0.4, 1.0],
+          stops: const [0.0, 0.5, 1.0],
         ),
       ),
       child: Center(
@@ -228,7 +300,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
                 gradient: LinearGradient(
                   colors: [
                     Colors.white,
-                    Colors.blue.shade50.withOpacity(0.5),
+                    Colors.orange.shade50.withOpacity(0.6),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -236,21 +308,27 @@ class _VideoListScreenState extends State<VideoListScreen> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withOpacity(0.15),
-                    blurRadius: 20,
+                    color: Colors.orange.withOpacity(0.2),
+                    blurRadius: 24,
                     offset: const Offset(0, 8),
                   ),
                   BoxShadow(
-                    color: Colors.purple.withOpacity(0.1),
+                    color: Colors.pink.withOpacity(0.15),
                     blurRadius: 12,
                     offset: const Offset(-4, 4),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.8),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
                   ),
                 ],
               ),
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(Colors.orange.shade400),
                 strokeWidth: 4,
-                backgroundColor: Colors.blue.shade100,
+                backgroundColor: Colors.orange.shade100,
               ),
             ),
             const SizedBox(height: 32),
@@ -285,10 +363,10 @@ class _VideoListScreenState extends State<VideoListScreen> {
           end: Alignment.bottomCenter,
           colors: [
             Colors.red.shade50,
-            Colors.orange.shade50.withOpacity(0.3),
+            Colors.orange.shade50.withOpacity(0.4),
             Colors.white,
           ],
-          stops: const [0.0, 0.4, 1.0],
+          stops: const [0.0, 0.5, 1.0],
         ),
       ),
       padding: const EdgeInsets.all(32),
@@ -382,14 +460,14 @@ class _VideoListScreenState extends State<VideoListScreen> {
                   height: 56,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.blue.shade500, Colors.purple.shade500],
+                      colors: [Colors.orange.shade400, Colors.pink.shade400],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.blue.withOpacity(0.3),
+                        color: Colors.orange.withOpacity(0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 6),
                       ),
@@ -430,11 +508,11 @@ class _VideoListScreenState extends State<VideoListScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.indigo.shade50,
-            Colors.cyan.shade50.withOpacity(0.3),
+            const Color(0xFFF8FAFF),
+            const Color(0xFFFFF4E6),
             Colors.white,
           ],
-          stops: const [0.0, 0.4, 1.0],
+          stops: const [0.0, 0.5, 1.0],
         ),
       ),
       padding: const EdgeInsets.all(32),
@@ -448,7 +526,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
                 gradient: LinearGradient(
                   colors: [
                     Colors.white,
-                    Colors.indigo.shade50.withOpacity(0.5),
+                    Colors.orange.shade50.withOpacity(0.6),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -456,14 +534,19 @@ class _VideoListScreenState extends State<VideoListScreen> {
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.indigo.withOpacity(0.15),
+                    color: Colors.orange.withOpacity(0.2),
                     blurRadius: 24,
                     offset: const Offset(0, 10),
                   ),
                   BoxShadow(
-                    color: Colors.cyan.withOpacity(0.1),
+                    color: Colors.pink.withOpacity(0.15),
                     blurRadius: 16,
                     offset: const Offset(-6, 6),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.8),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
                   ),
                 ],
               ),
@@ -472,7 +555,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
                 height: 80,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.indigo.shade500, Colors.cyan.shade500],
+                    colors: [Colors.orange.shade400, Colors.pink.shade400],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -508,20 +591,20 @@ class _VideoListScreenState extends State<VideoListScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.indigo.shade400.withOpacity(0.15),
-                    Colors.cyan.shade400.withOpacity(0.15),
+                    Colors.orange.shade200.withOpacity(0.2),
+                    Colors.pink.shade200.withOpacity(0.15),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: Colors.indigo.withOpacity(0.2),
+                  color: Colors.orange.withOpacity(0.3),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.indigo.withOpacity(0.1),
+                    color: Colors.orange.withOpacity(0.15),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -534,7 +617,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.indigo.shade500, Colors.cyan.shade500],
+                        colors: [Colors.orange.shade400, Colors.pink.shade400],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -548,7 +631,7 @@ class _VideoListScreenState extends State<VideoListScreen> {
                   Text(
                     'Pull to refresh',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.indigo.shade700,
+                      color: Colors.orange.shade700,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -638,24 +721,31 @@ class _VideoCardState extends State<VideoCard>
                   end: Alignment.bottomRight,
                   colors: [
                     Colors.white,
-                    Colors.blue.shade50.withOpacity(0.3),
+                    Colors.orange.shade50.withOpacity(0.4),
+                    Colors.pink.shade50.withOpacity(0.2),
                   ],
+                  stops: const [0.0, 0.7, 1.0],
                 ),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: Colors.blue.shade200.withOpacity(0.2),
+                  color: Colors.orange.shade200.withOpacity(0.3),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withOpacity(_isPressed ? 0.15 : 0.08),
-                    blurRadius: _isPressed ? 20 : 16,
-                    offset: Offset(0, _isPressed ? 8 : 6),
+                    color: Colors.orange.withOpacity(_isPressed ? 0.2 : 0.12),
+                    blurRadius: _isPressed ? 24 : 20,
+                    offset: Offset(0, _isPressed ? 10 : 8),
                   ),
                   BoxShadow(
-                    color: Colors.purple.withOpacity(_isPressed ? 0.1 : 0.05),
-                    blurRadius: _isPressed ? 12 : 8,
-                    offset: Offset(_isPressed ? -2 : -1, _isPressed ? 4 : 2),
+                    color: Colors.pink.withOpacity(_isPressed ? 0.15 : 0.08),
+                    blurRadius: _isPressed ? 16 : 12,
+                    offset: Offset(_isPressed ? -3 : -2, _isPressed ? 6 : 4),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.8),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
                   ),
                 ],
               ),
@@ -769,7 +859,7 @@ class _VideoCardState extends State<VideoCard>
                 gradient: LinearGradient(
                   colors: [
                     Colors.white,
-                    Colors.blue.shade50,
+                    Colors.orange.shade50,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -777,12 +867,12 @@ class _VideoCardState extends State<VideoCard>
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withOpacity(0.2),
+                    color: Colors.orange.withOpacity(0.3),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                   ),
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withOpacity(0.9),
                     blurRadius: 8,
                     offset: const Offset(0, -2),
                   ),
@@ -791,7 +881,7 @@ class _VideoCardState extends State<VideoCard>
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.blue.shade500, Colors.purple.shade500],
+                    colors: [Colors.orange.shade400, Colors.pink.shade400],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
