@@ -7,6 +7,7 @@ class VideoService {
       'https://apivideoplayer-production.up.railway.app/api/videos';
 
   Future<List<Video>> fetchVideos() async {
+    // throw Exception('Simulasi error - koneksi internet bermasalah!');
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/all'),
