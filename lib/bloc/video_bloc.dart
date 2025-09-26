@@ -30,6 +30,7 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
     RefreshVideos event,
     Emitter<VideoState> emit,
   ) async {
+    emit(VideoLoading());
     try {
       final videos = await _videoService.fetchVideos();
       emit(VideoLoaded(videos, allVideos: videos));
