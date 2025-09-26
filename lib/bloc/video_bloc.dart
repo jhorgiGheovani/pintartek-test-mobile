@@ -22,7 +22,7 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
       final videos = await _videoService.fetchVideos();
       emit(VideoLoaded(videos, allVideos: videos));
     } catch (e) {
-      emit(VideoError(e.toString()));
+      emit(VideoError(e.toString().replaceFirst("Exception:", "")));
     }
   }
 
@@ -35,7 +35,7 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
       final videos = await _videoService.fetchVideos();
       emit(VideoLoaded(videos, allVideos: videos));
     } catch (e) {
-      emit(VideoError(e.toString()));
+      emit(VideoError(e.toString().replaceFirst("Exception:", "")));
     }
   }
 

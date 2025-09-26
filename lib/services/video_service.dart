@@ -14,8 +14,14 @@ class VideoService {
         headers: {
           'Content-Type': 'application/json',
         },
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          throw Exception('Request timeout - server took too long to respond');
+        },
       );
-
+      ;
+      print('response: ${response}');
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body);
         print('Videos loaded: ${jsonData.length}');
@@ -26,7 +32,7 @@ class VideoService {
       }
     } catch (e) {
       print('Error fetching videos: $e');
-      throw Exception('Error fetching videos: $e');
+      throw Exception('Something went wrong. please try it again later!');
     }
   }
 }

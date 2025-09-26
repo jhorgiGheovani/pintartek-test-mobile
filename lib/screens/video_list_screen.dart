@@ -453,15 +453,15 @@ class _VideoListScreenState extends State<VideoListScreen>
               ),
               textAlign: TextAlign.center,
             ),
-            // const SizedBox(height: 12),
-            // Text(
-            //   message,
-            //   textAlign: TextAlign.center,
-            //   style: theme.textTheme.bodyLarge?.copyWith(
-            //     color: Colors.black.withOpacity(0.6),
-            //     height: 1.5,
-            //   ),
-            // ),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: Colors.black.withOpacity(0.6),
+                height: 1.5,
+              ),
+            ),
             const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
