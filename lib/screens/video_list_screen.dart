@@ -114,6 +114,8 @@ class _VideoListScreenState extends State<VideoListScreen>
                       snap: false,
                       elevation: 0,
                       backgroundColor: Colors.transparent,
+                      scrolledUnderElevation: 0,
+                      surfaceTintColor: Colors.transparent,
                       systemOverlayStyle: SystemUiOverlayStyle.dark,
                       flexibleSpace: FlexibleSpaceBar(
                         background: Container(
@@ -129,104 +131,100 @@ class _VideoListScreenState extends State<VideoListScreen>
                               stops: const [0.0, 0.6, 1.0],
                             ),
                           ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.white.withOpacity(0.2),
-                                    width: 1,
-                                  ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.white.withOpacity(0.2),
+                                  width: 1,
                                 ),
                               ),
-                              child: SafeArea(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 48,
-                                            height: 34,
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                colors: [
-                                                  Colors.orange.shade400,
-                                                  Colors.pink.shade400,
-                                                  Colors.red.shade400,
-                                                ],
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                stops: const [0.0, 0.6, 1.0],
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.orange
-                                                      .withOpacity(0.5),
-                                                  blurRadius: 20,
-                                                  offset: const Offset(0, 8),
-                                                ),
-                                                BoxShadow(
-                                                  color: Colors.pink
-                                                      .withOpacity(0.3),
-                                                  blurRadius: 12,
-                                                  offset: const Offset(4, 4),
-                                                ),
-                                                BoxShadow(
-                                                  color: Colors.white
-                                                      .withOpacity(0.8),
-                                                  blurRadius: 6,
-                                                  offset: const Offset(-2, -2),
-                                                ),
+                            ),
+                            child: SafeArea(
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: 48,
+                                          height: 34,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.orange.shade400,
+                                                Colors.pink.shade400,
+                                                Colors.red.shade400,
                                               ],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                              stops: const [0.0, 0.6, 1.0],
                                             ),
-                                            child: const Center(
-                                              child: Icon(
-                                                Icons.play_arrow,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.orange
+                                                    .withOpacity(0.5),
+                                                blurRadius: 20,
+                                                offset: const Offset(0, 8),
+                                              ),
+                                              BoxShadow(
+                                                color: Colors.pink
+                                                    .withOpacity(0.3),
+                                                blurRadius: 12,
+                                                offset: const Offset(4, 4),
+                                              ),
+                                              BoxShadow(
+                                                color: Colors.white
+                                                    .withOpacity(0.8),
+                                                blurRadius: 6,
+                                                offset: const Offset(-2, -2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: const Center(
+                                            child: Icon(
+                                              Icons.play_arrow,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: ShaderMask(
+                                            shaderCallback: (bounds) =>
+                                                LinearGradient(
+                                              colors: [
+                                                Colors.orange.shade600,
+                                                Colors.pink.shade600,
+                                                Colors.purple.shade600,
+                                              ],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ).createShader(bounds),
+                                            child: Text(
+                                              'Pintartek Video Platform',
+                                              style: theme
+                                                  .textTheme.headlineMedium
+                                                  ?.copyWith(
                                                 color: Colors.white,
-                                                size: 20,
+                                                fontWeight: FontWeight.w900,
+                                                letterSpacing: -0.8,
+                                                height: 1.1,
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: ShaderMask(
-                                              shaderCallback: (bounds) =>
-                                                  LinearGradient(
-                                                colors: [
-                                                  Colors.orange.shade600,
-                                                  Colors.pink.shade600,
-                                                  Colors.purple.shade600,
-                                                ],
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                              ).createShader(bounds),
-                                              child: Text(
-                                                'Pintartek Video Platform',
-                                                style: theme
-                                                    .textTheme.headlineMedium
-                                                    ?.copyWith(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w900,
-                                                  letterSpacing: -0.8,
-                                                  height: 1.1,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 20),
-                                      _buildSearchBar(),
-                                    ],
-                                  ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20),
+                                    _buildSearchBar(),
+                                  ],
                                 ),
                               ),
                             ),

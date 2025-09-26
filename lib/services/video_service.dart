@@ -18,11 +18,14 @@ class VideoService {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body);
+        print('Videos loaded: ${jsonData.length}');
         return jsonData.map((json) => Video.fromJson(json)).toList();
       } else {
+        print('Failed to load videos: ${response.statusCode}');
         throw Exception('Failed to load videos: ${response.statusCode}');
       }
     } catch (e) {
+      print('Error fetching videos: $e');
       throw Exception('Error fetching videos: $e');
     }
   }
