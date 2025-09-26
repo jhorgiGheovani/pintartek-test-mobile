@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -21,6 +23,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen> {
   bool _hasError = false;
   bool _showControls = true;
   String? _errorMessage;
+  Timer? _progressTimer;
 
   @override
   void initState() {
@@ -52,22 +55,16 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen> {
         }
       });
 
-      print('About to initialize controller...');
       await _controller.initialize();
-      print('Controller initialized successfully');
 
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
-        print('Starting video playback...');
         _controller.play();
+        _startProgressTimer();
       }
-
-      print('Video initialized successfully');
     } catch (e, stackTrace) {
-      print('Error initializing video: $e');
-      print('Stack trace: $stackTrace');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -78,8 +75,18 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen> {
     }
   }
 
+  void _startProgressTimer() {
+    _progressTimer?.cancel();
+    _progressTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (_controller.value.isInitialized && mounted) {
+        setState(() {});
+      }
+    });
+  }
+
   @override
   void dispose() {
+    _progressTimer?.cancel();
     _controller.dispose();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -219,7 +226,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              _errorMessage ?? 'Gagal load video nih, coba lagi yuk!',
+              'Gagal memuat video! Coba lagi nanti',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: Colors.white70,
                 height: 1.5,
