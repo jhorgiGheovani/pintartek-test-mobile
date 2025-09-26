@@ -715,8 +715,9 @@ class _VideoListScreenState extends State<VideoListScreen>
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
+            textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(
-              hintText: 'Cari video yang lo mau...',
+              hintText: 'Cari video yang kamu mau...',
               hintStyle: TextStyle(
                 color: Colors.black.withOpacity(0.5),
                 fontSize: 16,
@@ -739,6 +740,8 @@ class _VideoListScreenState extends State<VideoListScreen>
                   size: 20,
                 ),
               ),
+              prefixIconConstraints:
+                  const BoxConstraints(minWidth: 44, minHeight: 44),
               suffixIcon: _searchController.text.isNotEmpty
                   ? GestureDetector(
                       onTap: _clearSearch,
@@ -759,10 +762,7 @@ class _VideoListScreenState extends State<VideoListScreen>
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 16,
-              ),
+              contentPadding: EdgeInsets.zero,
             ),
             onSubmitted: (value) {
               if (value.isNotEmpty) {
