@@ -16,11 +16,61 @@ class VideoListScreen extends StatefulWidget {
   State<VideoListScreen> createState() => _VideoListScreenState();
 }
 
-class _VideoListScreenState extends State<VideoListScreen> {
+class _VideoListScreenState extends State<VideoListScreen>
+    with TickerProviderStateMixin {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  late AnimationController _searchAnimationController;
+  late Animation<double> _searchAnimation;
+  bool _isSearchActive = false;
+
   @override
   void initState() {
     super.initState();
     context.read<VideoBloc>().add(LoadVideos());
+
+    _searchAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _searchAnimation = CurvedAnimation(
+      parent: _searchAnimationController,
+      curve: Curves.easeInOutCubic,
+    );
+
+    _searchController.addListener(_onSearchChanged);
+    _searchFocusNode.addListener(_onSearchFocusChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    _searchAnimationController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    final query = _searchController.text;
+    context.read<VideoBloc>().add(SearchVideos(query));
+    setState(() {});
+  }
+
+  void _onSearchFocusChanged() {
+    setState(() {
+      _isSearchActive = _searchFocusNode.hasFocus;
+      if (_isSearchActive) {
+        _searchAnimationController.forward();
+      } else if (_searchController.text.isEmpty) {
+        _searchAnimationController.reverse();
+      }
+    });
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    _searchFocusNode.unfocus();
+    context.read<VideoBloc>().add(ClearSearch());
   }
 
   @override
@@ -41,181 +91,64 @@ class _VideoListScreenState extends State<VideoListScreen> {
             stops: const [0.0, 0.5, 1.0],
           ),
         ),
-        child: Stack(
-          children: [
-            Positioned(
-              top: 80,
-              right: 40,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.orange.shade300.withOpacity(0.2),
-                      Colors.pink.shade300.withOpacity(0.15),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.orange.withOpacity(0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 200,
-              left: 30,
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.blue.shade300.withOpacity(0.25),
-                      Colors.cyan.shade300.withOpacity(0.2),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.blue.withOpacity(0.15),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                  child: Center(
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.2),
-                      ),
-                      child: const Icon(
-                        Icons.play_circle_fill_rounded,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 350,
-              left: 15,
-              child: Container(
-                width: 25,
-                height: 25,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.yellow.shade300.withOpacity(0.4),
-                      Colors.orange.shade300.withOpacity(0.3),
-                    ],
-                  ),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 150,
-              left: 40,
-              child: Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.pink.shade300.withOpacity(0.35),
-                      Colors.red.shade300.withOpacity(0.25),
-                    ],
-                  ),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            BlocBuilder<VideoBloc, VideoState>(
-              builder: (context, state) {
-                if (state is VideoLoading) {
-                  return _buildLoadingState();
-                } else if (state is VideoLoaded) {
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      HapticFeedback.lightImpact();
-                      context.read<VideoBloc>().add(RefreshVideos());
-                    },
-                    color: Colors.orange.shade400,
-                    backgroundColor: Colors.white,
-                    strokeWidth: 3,
-                    child: CustomScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      slivers: [
-                        SliverAppBar(
-                          expandedHeight: 120,
-                          floating: false,
-                          pinned: false,
-                          snap: false,
-                          elevation: 0,
-                          backgroundColor: Colors.transparent,
-                          systemOverlayStyle: SystemUiOverlayStyle.dark,
-                          flexibleSpace: FlexibleSpaceBar(
-                            background: Container(
+        child: BlocBuilder<VideoBloc, VideoState>(
+          builder: (context, state) {
+            if (state is VideoLoading) {
+              return _buildLoadingState();
+            } else if (state is VideoLoaded) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  HapticFeedback.lightImpact();
+                  context.read<VideoBloc>().add(RefreshVideos());
+                },
+                color: Colors.orange.shade400,
+                backgroundColor: Colors.white,
+                strokeWidth: 3,
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    SliverAppBar(
+                      expandedHeight: 180,
+                      floating: false,
+                      pinned: false,
+                      snap: false,
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      systemOverlayStyle: SystemUiOverlayStyle.dark,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.orange.shade50.withOpacity(0.8),
+                                Colors.pink.shade50.withOpacity(0.6),
+                                Colors.white.withOpacity(0.4),
+                              ],
+                              stops: const [0.0, 0.6, 1.0],
+                            ),
+                          ),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.orange.shade50.withOpacity(0.8),
-                                    Colors.pink.shade50.withOpacity(0.6),
-                                    Colors.white.withOpacity(0.4),
-                                  ],
-                                  stops: const [0.0, 0.6, 1.0],
+                                color: Colors.white.withOpacity(0.1),
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.white.withOpacity(0.2),
+                                    width: 1,
+                                  ),
                                 ),
                               ),
-                              child: BackdropFilter(
-                                filter:
-                                    ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.1),
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: Colors.white.withOpacity(0.2),
-                                        width: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  child: SafeArea(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 20),
-                                      child: Row(
+                              child: SafeArea(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
                                         children: [
                                           Container(
                                             width: 48,
@@ -264,131 +197,81 @@ class _VideoListScreenState extends State<VideoListScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    ShaderMask(
-                                                      shaderCallback:
-                                                          (bounds) =>
-                                                              LinearGradient(
-                                                        colors: [
-                                                          Colors
-                                                              .orange.shade600,
-                                                          Colors.pink.shade600,
-                                                          Colors
-                                                              .purple.shade600,
-                                                        ],
-                                                        begin:
-                                                            Alignment.topLeft,
-                                                        end: Alignment
-                                                            .bottomRight,
-                                                      ).createShader(bounds),
-                                                      child: Text(
-                                                        'Pintartek Video Platform',
-                                                        style: theme.textTheme
-                                                            .headlineMedium
-                                                            ?.copyWith(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.w900,
-                                                          letterSpacing: -0.8,
-                                                          height: 1.1,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                            child: ShaderMask(
+                                              shaderCallback: (bounds) =>
+                                                  LinearGradient(
+                                                colors: [
+                                                  Colors.orange.shade600,
+                                                  Colors.pink.shade600,
+                                                  Colors.purple.shade600,
+                                                ],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                              ).createShader(bounds),
+                                              child: Text(
+                                                'Pintartek Video Platform',
+                                                style: theme
+                                                    .textTheme.headlineMedium
+                                                    ?.copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w900,
+                                                  letterSpacing: -0.8,
+                                                  height: 1.1,
                                                 ),
-                                                // const SizedBox(height: 4),
-                                                // Container(
-                                                //   padding: const EdgeInsets
-                                                //       .symmetric(
-                                                //     horizontal: 12,
-                                                //     vertical: 6,
-                                                //   ),
-                                                //   decoration: BoxDecoration(
-                                                //     gradient: LinearGradient(
-                                                //       colors: [
-                                                //         Colors.white
-                                                //             .withOpacity(0.9),
-                                                //         Colors.orange.shade50
-                                                //             .withOpacity(0.8),
-                                                //       ],
-                                                //     ),
-                                                //     borderRadius:
-                                                //         BorderRadius.circular(
-                                                //             20),
-                                                //     boxShadow: [
-                                                //       BoxShadow(
-                                                //         color: Colors.black
-                                                //             .withOpacity(0.05),
-                                                //         blurRadius: 8,
-                                                //         offset:
-                                                //             const Offset(0, 2),
-                                                //       ),
-                                                //     ],
-                                                //   ),
-                                                //   child: Text(
-                                                //     'Koleksi video keren buat kamu! ✨',
-                                                //     style: theme
-                                                //         .textTheme.bodyMedium
-                                                //         ?.copyWith(
-                                                //       color: Colors
-                                                //           .orange.shade800,
-                                                //       fontWeight:
-                                                //           FontWeight.w600,
-                                                //       letterSpacing: 0.2,
-                                                //     ),
-                                                //   ),
-                                                // ),
-                                              ],
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
+                                      const SizedBox(height: 20),
+                                      _buildSearchBar(),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        SliverPadding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final video = state.videos[index];
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 20),
-                                  child: VideoCard(
-                                    video: video,
-                                    onTap: () =>
-                                        _navigateToPlayer(context, video),
-                                  ),
-                                );
-                              },
-                              childCount: state.videos.length,
-                            ),
-                          ),
-                        ),
-                        const SliverToBoxAdapter(
-                          child: SizedBox(height: 40),
-                        ),
-                      ],
+                      ),
                     ),
-                  );
-                } else if (state is VideoError) {
-                  return _buildErrorState(state.message);
-                }
-                return _buildEmptyState();
-              },
-            ),
-          ],
+                    if (state.searchQuery.isNotEmpty && state.videos.isEmpty)
+                      SliverToBoxAdapter(
+                        child: _buildNoSearchResults(state.searchQuery),
+                      )
+                    else if (state.searchQuery.isNotEmpty)
+                      SliverToBoxAdapter(
+                        child: _buildSearchResultsHeader(
+                            state.videos.length, state.searchQuery),
+                      ),
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final video = state.videos[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: VideoCard(
+                                video: video,
+                                onTap: () => _navigateToPlayer(context, video),
+                              ),
+                            );
+                          },
+                          childCount: state.videos.length,
+                        ),
+                      ),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: 40),
+                    ),
+                  ],
+                ),
+              );
+            } else if (state is VideoError) {
+              return _buildErrorState(state.message);
+            }
+            return _buildEmptyState();
+          },
         ),
       ),
     );
@@ -785,6 +668,265 @@ class _VideoListScreenState extends State<VideoListScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return AnimatedBuilder(
+      animation: _searchAnimation,
+      builder: (context, child) {
+        return Container(
+          height: 52,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.white.withOpacity(0.95),
+                Colors.orange.shade50.withOpacity(0.8),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(
+              color: _isSearchActive
+                  ? Colors.orange.shade400.withOpacity(0.6)
+                  : Colors.white.withOpacity(0.4),
+              width: _isSearchActive ? 2 : 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: _isSearchActive
+                    ? Colors.orange.withOpacity(0.25)
+                    : Colors.black.withOpacity(0.08),
+                blurRadius: _isSearchActive ? 16 : 12,
+                offset: Offset(0, _isSearchActive ? 6 : 4),
+              ),
+              BoxShadow(
+                color: Colors.white.withOpacity(0.8),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: TextField(
+            controller: _searchController,
+            focusNode: _searchFocusNode,
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+            decoration: InputDecoration(
+              hintText: 'Cari video yang lo mau...',
+              hintStyle: TextStyle(
+                color: Colors.black.withOpacity(0.5),
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.orange.shade400.withOpacity(0.8),
+                      Colors.pink.shade400.withOpacity(0.8),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.search_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? GestureDetector(
+                      onTap: _clearSearch,
+                      child: Container(
+                        margin: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.close_rounded,
+                          color: Colors.grey.shade600,
+                          size: 20,
+                        ),
+                      ),
+                    )
+                  : null,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
+            ),
+            onSubmitted: (value) {
+              if (value.isNotEmpty) {
+                HapticFeedback.lightImpact();
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSearchResultsHeader(int count, String query) {
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.blue.shade50.withOpacity(0.8),
+            Colors.cyan.shade50.withOpacity(0.6),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.blue.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade400, Colors.cyan.shade400],
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.search_rounded,
+              color: Colors.white,
+              size: 16,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+                children: [
+                  TextSpan(text: 'Ditemukan '),
+                  TextSpan(
+                    text: '$count video',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.blue.shade700,
+                    ),
+                  ),
+                  TextSpan(text: ' untuk "'),
+                  TextSpan(
+                    text: query,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.orange.shade700,
+                    ),
+                  ),
+                  TextSpan(text: '"'),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoSearchResults(String query) {
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.grey.shade50,
+            Colors.blue.shade50.withOpacity(0.3),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.grey.shade300, Colors.grey.shade400],
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              Icons.search_off_rounded,
+              size: 48,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Video tidak tersedia',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: Colors.black87,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 8),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: Colors.black.withOpacity(0.6),
+                height: 1.5,
+              ),
+              children: [
+                TextSpan(text: 'Video dengan kata kunci "'),
+                TextSpan(
+                  text: query,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.orange.shade700,
+                  ),
+                ),
+                TextSpan(text: '" tidak ada. Coba kata kunci lain!'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

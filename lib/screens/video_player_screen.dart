@@ -35,7 +35,6 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen> {
     try {
       print('Initializing video: ${widget.video.videoUrl}');
 
-      // Add delay to ensure platform is ready
       await Future.delayed(const Duration(milliseconds: 100));
 
       _controller = VideoPlayerController.network(widget.video.videoUrl);

@@ -19,3 +19,14 @@ class LoadVideoById extends VideoEvent {
 }
 
 class RefreshVideos extends VideoEvent {}
+
+class SearchVideos extends VideoEvent {
+  final String query;
+
+  const SearchVideos(this.query);
+
+  @override
+  List<Object> get props => [query];
+}
+
+class ClearSearch extends VideoEvent {}

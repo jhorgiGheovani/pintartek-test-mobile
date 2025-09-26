@@ -14,11 +14,29 @@ class VideoLoading extends VideoState {}
 
 class VideoLoaded extends VideoState {
   final List<Video> videos;
+  final List<Video> allVideos;
+  final String searchQuery;
 
-  const VideoLoaded(this.videos);
+  const VideoLoaded(
+    this.videos, {
+    this.allVideos = const [],
+    this.searchQuery = '',
+  });
 
   @override
-  List<Object> get props => [videos];
+  List<Object> get props => [videos, allVideos, searchQuery];
+
+  VideoLoaded copyWith({
+    List<Video>? videos,
+    List<Video>? allVideos,
+    String? searchQuery,
+  }) {
+    return VideoLoaded(
+      videos ?? this.videos,
+      allVideos: allVideos ?? this.allVideos,
+      searchQuery: searchQuery ?? this.searchQuery,
+    );
+  }
 }
 
 class VideoError extends VideoState {
