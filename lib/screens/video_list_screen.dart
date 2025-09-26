@@ -565,22 +565,22 @@ class _VideoListScreenState extends State<VideoListScreen> {
             ),
             const SizedBox(height: 32),
             Text(
-              'Waduh! Ada masalah nih',
+              'Oppsss! There is some problem',
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: Colors.black87,
                 fontWeight: FontWeight.w800,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: Colors.black.withOpacity(0.6),
-                height: 1.5,
-              ),
-            ),
+            // const SizedBox(height: 12),
+            // Text(
+            //   message,
+            //   textAlign: TextAlign.center,
+            //   style: theme.textTheme.bodyLarge?.copyWith(
+            //     color: Colors.black.withOpacity(0.6),
+            //     height: 1.5,
+            //   ),
+            // ),
             const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
@@ -600,7 +600,6 @@ class _VideoListScreenState extends State<VideoListScreen> {
                     borderRadius: BorderRadius.circular(18),
                   ),
                 ),
-                icon: const Icon(Icons.refresh_rounded, size: 22),
                 label: Container(
                   width: double.infinity,
                   height: 56,
